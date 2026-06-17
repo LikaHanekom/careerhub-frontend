@@ -112,3 +112,40 @@ Route (app)
 ○  (Static)  prerendered as static content
 
 PS C:\Users\TrainingCenter 4\careerhub-frontend> 
+
+# Assignment 1.2 #
+1. shadcn/ui is different from traditional component libraries because you own the code.
+The component source lives in src/components/ui/ after installation
+and you ou are responsible for it - it's your code. When shadcn/ui releases updates, you manually copy the new code or update your local files. There is also no forced migrations because you control the code. You won't face breaking changes like with MUI's variant → intent rename because you control the component code.
+
+2. Why the cn Utility Exists
+ cn combines clsx (for conditional classes) and tailwind-merge (to resolve conflicts).
+
+Example scenario:
+
+typescript
+Wrong with template literal:// 
+<div className={`bg-white ${isActive ? 'bg-blue-500' : 'bg-gray-100'}`}>
+  {/* Both bg-white and bg-blue-500 apply - conflict! */}
+</div>
+
+// Correct with cn:
+<div className={cn(
+  'bg-white',
+  isActive && 'bg-blue-500'
+)}>
+  {/* tailwind-merge resolves conflict, bg-blue-500 wins when active */}
+</div>
+CSS order in stylesheet makes string concatenation unreliable for resolving conflicts.
+
+3. Event Handler vs useEffect for Persistence
+The scenario handler can't handle: The user selects a job, then refreshes the page - the selection is lost.
+UseEffect is better, it handles all selection changes regardless of source (clicks, keyboard, programmatic)
+Click handler for user interaction, useEffect for side effects. Works even if selection is changed through other means.
+
+4. Source of Truth for Dark Mode
+True source: The dark class on <html> element
+
+What isDark state does: Tracks the current mode for the toggle button's display/icon
+
+What happens on unmount/remount: The React state resets, but localStorage and the <html> class persist the preference
