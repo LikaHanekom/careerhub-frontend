@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import JobCard from "@/components/JobCard";
 import { JobListing } from "../types"; // Adjust path as needed
 
@@ -88,13 +88,29 @@ const jobs: JobListing[] = [
 
 export default function Home() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  // Find the selected job object to display in the panel
-  const selectedJob = jobs.find((j) => j.id === selectedId);
 
-  const handleSelect = (id: string) => {
-    // Toggle: if clicking the same ID, set to null, otherwise set to the clicked ID
-    setSelectedId((prev) => (prev === id ? null : id));
-  };
+  // Restore selection from sessionStorage on mount
+  useEffect(() => {
+    const savedId = sessionStorage.getItem('selectedJobId');
+    if (savedId) {
+      // Only restore if job still exists in our list
+      const jobExists = jobs.some(job => job.id === savedId);
+      if (jobExists) {
+        setSelectedId(savedId);
+      }
+    }
+  }, []); // Empty dependency array: runs once on mount
+
+  // Persist selection changes to sessionStorage
+  useEffect(() => {
+    if (selectedId !== null) {
+      sessionStorage.setItem('selectedJobId', selectedId);
+    } else {
+      sessionStorage.removeItem('selectedJobId');
+    }
+  }, [selectedId]); // Runs whenever selectedId changes
+
+  const selectedJob = jobs.find((j) => j.id === selectedId);
 
   return (
     <div className="min-h-screen bg-zinc-50 p-8 dark:bg-black">
@@ -103,7 +119,6 @@ export default function Home() {
           Job Openings
         </h1>
 
-        {/* Conditional Summary Panel */}
         {selectedJob && (
           <div className="p-6 bg-blue-50 border border-blue-200 rounded-lg shadow-sm">
             <h2 className="text-lg font-bold text-blue-900">Selected Opportunity</h2>
@@ -113,13 +128,13 @@ export default function Home() {
           </div>
         )}
 
-        
         {jobs.map((job) => (
           <JobCard
             key={job.id}
             job={job}
             isSelected={selectedId === job.id}
-            onSelect={(id) => setSelectedId(id)}
+            // Use your toggle logic here
+            onSelect={() => setSelectedId(selectedId === job.id ? null : job.id)}
           />
         ))}
       </main>
