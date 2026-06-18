@@ -36,6 +36,7 @@ export default function JobCard({ job, isSelected, onSelect }: JobCardProps) {
                 {job.company} · {job.location}
             </p>
 
+            // Implement JobStatusBadge in JobCard
             <div className="flex flex-wrap gap-2 items-center mb-2">
                 <JobStatusBadge 
                     employmentType={job.employmentType} 
