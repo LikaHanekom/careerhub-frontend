@@ -3,6 +3,7 @@
 
 @tailwind base;
 
+@custom-variant dark (&:where(.dark, .dark *));
 @custom-variant dark (&:is(.dark *));
 @tailwind components;
 @tailwind utilities;

@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import JobCard from "@/components/JobCard";
-import { JobListing } from "../types"; // Adjust path as needed
+import { JobListing } from "../types";
+import { cn } from "@/lib/utils";
 
-// This is where you would typically fetch your data
+// Mock DATA
 const jobs: JobListing[] = [
   {
     id: "1",
@@ -41,7 +42,7 @@ const jobs: JobListing[] = [
     salaryMin: 12000,
     salaryMax: 18000,
     postedAt: "2026-06-16T14:30:00Z",
-    isActive: false,
+    isActive: true,
     applicantCount: 0,
     isAvailable: true,
   },
@@ -80,7 +81,7 @@ const jobs: JobListing[] = [
     salaryMin: 12000,
     salaryMax: 18000,
     postedAt: "2026-05-16T14:30:00Z",
-    isActive: false,
+    isActive: true,
     applicantCount: 0,
     isAvailable: true,
   },
@@ -93,13 +94,13 @@ export default function Home() {
   useEffect(() => {
     const savedId = sessionStorage.getItem('selectedJobId');
     if (savedId) {
-      // Only restore if job still exists in our list
+      // Only restore if job still exists in the list
       const jobExists = jobs.some(job => job.id === savedId);
       if (jobExists) {
         setSelectedId(savedId);
       }
     }
-  }, []); // Empty dependency array: runs once on mount
+  }, []); 
 
   // Persist selection changes to sessionStorage
   useEffect(() => {
@@ -108,21 +109,27 @@ export default function Home() {
     } else {
       sessionStorage.removeItem('selectedJobId');
     }
-  }, [selectedId]); // Runs whenever selectedId changes
+  }, [selectedId]);
 
   const selectedJob = jobs.find((j) => j.id === selectedId);
 
   return (
-    <div className="min-h-screen bg-zinc-50 p-8 dark:bg-black">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-8 px-4">
       <main className="mx-auto max-w-3xl space-y-4">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           Job Openings
         </h1>
 
         {selectedJob && (
-          <div className="p-6 bg-blue-50 border border-blue-200 rounded-lg shadow-sm">
-            <h2 className="text-lg font-bold text-blue-900">Selected Opportunity</h2>
-            <p className="text-blue-700">
+          <div className={cn(
+            "border rounded-lg p-6 shadow-sm",
+            "bg-white dark:bg-gray-800",
+            "border-blue-200 dark:border-gray-700"
+          )}>
+            <h2 className="text-lg font-bold text-blue-900 dark:text-blue-300">
+              Selected Opportunity
+            </h2>
+            <p className="text-blue-700 dark:text-blue-200">
               {selectedJob.title} at {selectedJob.company}
             </p>
           </div>
@@ -133,7 +140,6 @@ export default function Home() {
             key={job.id}
             job={job}
             isSelected={selectedId === job.id}
-            // Use your toggle logic here
             onSelect={() => setSelectedId(selectedId === job.id ? null : job.id)}
           />
         ))}
