@@ -23,7 +23,7 @@ export default function JobCard({ job, isSelected, onSelect }: JobCardProps) {
                 "border-2 p-4 rounded-lg shadow-sm cursor-pointer transition-all duration-200",
                 "bg-white dark:bg-gray-800",
                 isSelected 
-                    ? "border-blue-500 dark:border-blue-400 ring-1 ring-blue-500/20"
+                    ? "border-blue-500 dark:border-blue-400 ring-1 ring-blue-500/20" //dark mode variances
                     : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600",
             )}
         >

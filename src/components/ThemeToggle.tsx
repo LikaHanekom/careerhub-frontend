@@ -9,7 +9,7 @@ export function ThemeToggle(){
 
     useEffect(()=>{
         setMounted(true);
-        //checks localstorage
+        //checks browsers permanent memory
         const stored = localStorage.getItem("theme");
         if(stored){
             const isDarkMode = stored === "dark";
@@ -18,17 +18,17 @@ export function ThemeToggle(){
             return;
         }
 
-        const prefersDark = window.matchMedia("(prefer-color-scheme: dark)").matches;
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;//checks users prefered setting
         setIsDark(prefersDark);
         document.documentElement.classList.toggle("dark", prefersDark);
 
     },[])
 
     const toggleTheme = () => {
-        const newIsDark = !isDark;
+        const newIsDark = !isDark; //If isDark is true, then newIsDark becomes false
         setIsDark(newIsDark);
-        document.documentElement.classList.toggle("dark", newIsDark);
-        localStorage.setItem("theme", newIsDark ? "dark" : "light");
+        document.documentElement.classList.toggle("dark", newIsDark);//adds or removes the CSS class name dark from that root tag.
+        localStorage.setItem("theme", newIsDark ? "dark" : "light"); //save choice permanent
     };
 
     if (!mounted) return null;
