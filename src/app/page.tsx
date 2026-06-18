@@ -90,7 +90,8 @@ const jobs: JobListing[] = [
 export default function Home() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  // Restore selection from sessionStorage on mount
+  // Restore selection from sessionStorage on mount (update the applications local state)
+  //OnLoad- it checks if it saved an ID in the browser before if so, it reselects any job that is still there.
   useEffect(() => {
     const savedId = sessionStorage.getItem('selectedJobId');
     if (savedId) {
@@ -103,15 +104,16 @@ export default function Home() {
   }, []); 
 
   // Persist selection changes to sessionStorage
+  //When a user selects a different job, this updates the bookingmark in the browsers memory.
   useEffect(() => {
     if (selectedId !== null) {
       sessionStorage.setItem('selectedJobId', selectedId);
     } else {
-      sessionStorage.removeItem('selectedJobId');
+      sessionStorage.removeItem('selectedJobId'); //removes key from storage - ensures no ghost data 
     }
   }, [selectedId]);
 
-  const selectedJob = jobs.find((j) => j.id === selectedId);
+  const selectedJob = jobs.find((j) => j.id === selectedId);//recalabrates everytime the job or selectedid change
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-8 px-4">
