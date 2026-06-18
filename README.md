@@ -149,3 +149,43 @@ True source: The dark class on <html> element
 What isDark state does: Tracks the current mode for the toggle button's display/icon
 
 What happens on unmount/remount: The React state resets, but localStorage and the <html> class persist the preference
+
+
+# Project Implementation Details
+
+## 1. Component Extraction Rationale
+`JobStatusBadge` is extracted into a standalone component to adhere to the **Single Responsibility Principle (SRP)**. This ensures that `JobCard` focuses solely on layout and data display, while `JobStatusBadge` manages the logic for status rendering and styling.
+
+* **Without extraction:** If the color scheme required an update, you would be forced to manually edit every instance of the badge within `JobCard` and potentially other components, leading to inconsistency and increased risk of bugs.
+* **With extraction:** The color mapping is centralized in `JobStatusBadge.tsx`. Any design change is made in one place and propagates globally across the application.
+
+## 2. The `cn` Utility
+The `cn` function is a helper that combines `clsx` and `tailwind-merge` to manage class names cleanly.
+
+* **`clsx`**: Allows for conditional class application, making it easy to toggle styles based on logic (e.g., `isSelected && "border-blue-500"`).
+* **`tailwind-merge`**: Resolves Tailwind class conflicts. 
+* **Failure Mode**: Without `tailwind-merge`, Tailwind classes might stack incorrectly. For example, if your base style is `p-4` and you conditionally apply `p-10`, the browser might keep both, causing the base style to take precedence. `tailwind-merge` ensures that the most specific or latest class overrides the base one, preventing layout errors like the one encountered in `JobCard` when applying conditional `isActive` styles.
+
+## 3. Effect Responsibilities
+The following table outlines the lifecycle and purpose of the `useEffect` hooks used in `page.tsx`.
+
+| Effect | Dependency Array | Runs when |
+| :--- | :--- | :--- |
+| **Fetch Jobs** | `[]` | Component mounts initially. |
+| **Filter/Sort** | `[jobs, filter, sort]` | Dependencies change (filters/sort criteria). |
+| **Merged Effect** | `[jobs, filter, sort]` | Component mounts AND on any dependency change. |
+
+**What breaks if merged:** Merging these effects would force the application to re-fetch data from the API every time a filter or sort option is changed. This causes unnecessary network overhead, degraded performance, and potential state synchronization issues (race conditions).
+
+## 4. Build Output
+```
+PS C:\Users\alika\OneDrive\Documents\Alika IT\Bitcube\careerhub-frontend> npm run dev
+
+> careerhub-frontend@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.9 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.20.144.1:3000
+✓ Ready in 1575ms
+```
